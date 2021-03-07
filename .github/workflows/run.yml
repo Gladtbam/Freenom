@@ -15,9 +15,9 @@
 name: Freenom auto Renew
 
 on:
-  push:
-    branches:
-      - master
+#  push:
+#    branches:
+#      - master
   schedule:
     - cron: 0 0 * * *
 jobs:
@@ -53,3 +53,9 @@ jobs:
       - name: Run
         run: |
           php run
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v1.2.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          retain_days: 7
+          keep_minimum_runs: 7
