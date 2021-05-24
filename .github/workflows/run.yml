@@ -15,9 +15,6 @@
 name: Freenom auto Renew
 
 on:
-#  push:
-#    branches:
-#      - master
   schedule:
     - cron: 0 0 * * *
 jobs:
