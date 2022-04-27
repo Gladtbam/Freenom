@@ -17,7 +17,7 @@ name: Freenom auto Renew
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 8 27 4 *
+    - cron: 0 8 20 4 *
 jobs:
   run-it:
     runs-on: ubuntu-latest
