@@ -41,10 +41,10 @@ jobs:
           if [ '${{ secrets.NEZHA_KEY }}' != '' ]; then sed -i "s/^NEZHA_KEY=.*$/NEZHA_KEY='${{ secrets.NEZHA_KEY }}'/" .env; fi
       - name: Run
         run: |
-          php run
+          sudo php run
       - name: Log
         run: |
-          ls logs/
+          cat logs/*/*.log
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@main
         with:
