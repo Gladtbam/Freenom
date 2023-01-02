@@ -7,13 +7,13 @@
  * @time 12:01
  */
 
-namespace Luolongfei\Lib;
+namespace Luolongfei\Libs;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Bramus\Monolog\Formatter\ColoredLineFormatter;
 
-class Log
+class Log extends Base
 {
     /**
      * @var Logger
@@ -31,15 +31,24 @@ class Log
     public static function logger()
     {
         if (!self::$loggerInstance instanceof Logger) {
-            $handler = new StreamHandler(
-                config('debug') ? 'php://stdout' : sprintf('%s/logs/%s.log', ROOT_PATH, date('Y-m/d')),
-                config('debug') ? Logger::DEBUG : Logger::INFO
-            );
-            if (config('debug')) {
-                $handler->setFormatter(new ColoredLineFormatter(null, "[%datetime%] %channel%.%level_name%: %message%\n"));
+            // 检查日志目录权限
+            $logDir = sprintf('%s/logs/', ROOT_PATH);
+
+            if (!is_writable($logDir)) {
+                system_log(sprintf('由于没有日志目录 %s 的写权限，无法生成日志文件，只能直接输出', $logDir));
+                $stream = 'php://stdout';
+            } else {
+                // 云函数只能在 /tmp 目录下写文件
+                $stream = IS_SCF ? 'php://stdout' : sprintf('%s/logs/%s.log', ROOT_PATH, date('Y-m/d'));
             }
 
-            $logger = new Logger('pusher');
+            $handler = new StreamHandler(
+                $stream,
+                config('debug') ? Logger::DEBUG : Logger::INFO
+            );
+            $handler->setFormatter(new ColoredLineFormatter(null, "[%datetime%] %channel%.%level_name%: %message%\n"));
+
+            $logger = new Logger('ff');
             $logger->pushHandler($handler);
 
             self::$loggerInstance = $logger;
